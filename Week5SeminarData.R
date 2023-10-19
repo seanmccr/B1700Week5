@@ -2,18 +2,21 @@
 
 library(ggplot2)
 library(tidyverse)
-install.packages("tidyr")
 library(tidyr)
-install.packages("naniar")
 library(naniar)
-strengthdata <- readxl::read_excel("/Users/seanmccrone/Desktop/Strength Testing Data.xlsx")
 
-tidyr::replace_na(strengthdata)
-naniar::replace_with_na(data = strengthdata,
-                        .predicate = is.character,
-                        condition = ~.x == "-")
+# ----- Upload Data File -----
+strengthdata <- readxl::read_excel("/Users/seanmccrone/Desktop/MASTERS DEGREE/Course Material/B1700/Week 5/Seminar Data/Strength Testing Data.xlsx")
+# ----- Summary of Data File -----
+summary(strengthdata)
+# ----- Cleaning Data File -----
+##### Converting Variables from Character to Numeric/Integer #####
+strengthdata <- strengthdata %>%
+  mutate(across(2:5, as.integer))
+# Code to remove our specific row of data from our data frame
+strengthdata <- strengthdata %>%
+  slice(-11)
 
-print(strengthdata, n = 11)
 
 
 
