@@ -1,46 +1,75 @@
 # ---- Week 5 Seminar Data ----
-##### Load Libraries #####
+
+# ---- Load Libraries ----
+
+```{r}
 library(ggplot2)
 library(tidyverse)
 library(tidyr)
 library(naniar)
+```
 
 # ----- Upload Data File -----
+
+```{r}
 strengthdata <- readxl::read_excel("/Users/seanmccrone/Desktop/MASTERS DEGREE/Course Material/B1700/Week 5/Seminar Data/Strength Testing Data.xlsx")
+```
 
 # ----- Summary of Data File -----
-summary(strengthdata)
 
-# ----- Cleaning Data File -----
-##### Converting Variables from Character to Numeric/Integer #####
+```{r}
+summary(strengthdata)
+```
+
+# ----- Cleaning the Data File -----
+
+##### Converting Variables from Character to Numeric/Integer
+
+```{r}
 strengthdata <- strengthdata %>%
   mutate(across(2:5, ~as.integer(.x)))
 strengthdata
+```
 
-##### Code to remove 'NA' values, now that we have converted to numeric/integer #####
+##### Code to remove 'NA' values, now that we have converted to numeric/integer
+
+```{r}
 strengthdata <- na.omit(strengthdata)
+```
 
-##### Code to rename the variables #####
+##### Code to rename the variables
+
+```{r}
 strengthdata <- strengthdata %>%
   rename(PlayerName = `Player Name`,
          HamForL = `Hamstring Force (L)`,
          HamForR = `Hamstring Force (R )`,
          GroForL = `Groin Strength (L)`,
          GroForR = `Groin Strength (R )`)
-         
-##### Code for summary of the strengthdata #####
+```
+
+##### Code for summary of the strengthdata
+
+```{r}
 summary(strengthdata)
+```
 
 # ---- Creating Visuals ----
-##### Code to stack all variables representing force on top of each other per player #####
+
+##### Code to stack all variables representing force on top of each other per player
+
+```{r}
 strengthdata_long <- strengthdata %>%
   pivot_longer(cols = c(HamForL, HamForR, GroForL, GroForR), names_to = "Variable", values_to = "Force")
 
 ggplot(strengthdata_long, aes(fill = Variable, x = PlayerName, y = Force)) +
   geom_bar(position = "stack", stat = "identity") +
   labs(title = "Stacked Bar Plot", x = "Player Name", y = "Force")
+```
 
-##### This code creates a grouped bar graph, showing the 4 variables per player side by side ####
+##### This code creates a grouped bar graph, showing the 4 variables per player side by side
+
+```{r}
 strengthdata_long <- strengthdata %>% 
   pivot_longer(cols = c(HamForL, HamForR, GroForL, GroForR), 
                names_to = "Variable", 
@@ -49,8 +78,11 @@ strengthdata_long <- strengthdata %>%
 ggplot(strengthdata_long, aes(x = PlayerName, y = Force, fill = Variable)) + 
   geom_bar(stat = "identity", position = position_dodge(), width = 0.5) +
   labs(title = "Grouped Bar Graph", x = "Player Name", y = "Force")
+```
 
-##### This code removes the outliers found in the dataset 'strengthdata' #####
+##### This code removes the outliers found in the dataset 'strengthdata'
+
+```{r}
 remove_outliers <- function(df, columns, z_threshold = 2) {
   df_cleaned <- df
   for (col in columns) {
@@ -61,3 +93,4 @@ remove_outliers <- function(df, columns, z_threshold = 2) {
   df_cleaned
 }
 strengthdata2 <- remove_outliers(strengthdata, c("HamForL", "HamForR","GroForL", "GroForR"))
+```
